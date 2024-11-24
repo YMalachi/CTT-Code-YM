@@ -13,15 +13,15 @@ def get_video_folders(subjects_dir):
 
     Input:
         ***IMPORTANT: USE RAW STRING OR REPLACE DIRECTORY PATH'S " \ " WITH " / " OTHERWISE IT WON'T WORK***
-        subjects_dir (str): The path to the root directory containing all subject data and recordings. 
+        subjects_dir (raw str): The path to the root directory containing all subject data and recordings. 
                              Example: 'C:/Data' or '/home/user/Data'.
     
     Output:
-        list: A list of full paths to the "Trail B" test directories (as strings), one for each subject. 
+        list: A list of full paths to the "Trail B" test directories (as raw strings), one for each subject. 
               Each path corresponds to the latest numbered directory inside the `PL` folder for each subject.
     
     Example:
-        If the input is `C:/Data`, the output might look like:
+        If the input is `C:/Data`, the output might look like (as raw str type):
         [
             'C:/Data/ZS109/REC_ET/PL/003',
             'C:/Data/ZS110/REC_ET/PL/002',
@@ -51,7 +51,7 @@ def get_video_folders(subjects_dir):
 
                 # Get the full path to the folder
                 video_folder_path = os.path.join(pl_folder, highest_video_folder)
-                video_folders.append(video_folder_path)
+                video_folders.append(repr(video_folder_path))
                 
 
     return video_folders
@@ -136,11 +136,11 @@ def process_video_dirs(dir_list, pupil_player_path, output_base_dir):
         except subprocess.CalledProcessError as e:
             print(f"Error processing {video_dir}: {e}")
 
-# Example usage
-dir_list = [
-    r"C:\Users\yotam\Desktop\Studies\year 3\CTT Project\CTT Yotam Malachi\YotamMalachi\data\AN755\REC_ET\PL\005"
-]
-pupil_player_path = r"C:\Users\yotam\Desktop\Studies\year 3\CTT Project\Pupil Lab\Pupil Player v3.5.1\pupil_player.exe"
-output_base_dir = r"C:\Users\yotam\Desktop\Studies\year 3\CTT Project\CTT Yotam Malachi\Code and everything\test"  # Base directory where "Trail B Data" will be created
+# # Example usage
+# dir_list = [
+#     r"C:\Users\yotam\Desktop\Studies\year 3\CTT Project\CTT Yotam Malachi\YotamMalachi\data\AN755\REC_ET\PL\005"
+# ]
+# pupil_player_path = r"C:\Users\yotam\Desktop\Studies\year 3\CTT Project\Pupil Lab\Pupil Player v3.5.1\pupil_player.exe"
+# output_base_dir = r"C:\Users\yotam\Desktop\Studies\year 3\CTT Project\CTT Yotam Malachi\Code and everything\test"  # Base directory where "Trail B Data" will be created
 
-process_video_dirs(dir_list, pupil_player_path, output_base_dir)
+# process_video_dirs(dir_list, pupil_player_path, output_base_dir)
