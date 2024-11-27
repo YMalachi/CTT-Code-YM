@@ -3,7 +3,7 @@
  Legend: </br>
 1.	Functions: </br>
  1.1.	Pre Processing Functions</br>
-  1.1.1.	get_video_folders 
+  1.1.1.	get_video_folders </br> 
   1.1.2.	process_video_dirs 
 </br>
 </br>
