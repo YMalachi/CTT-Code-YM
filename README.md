@@ -29,6 +29,7 @@ Note 2: I recommend creating a virtual environment for this (step 2).
    python -m venv pupil_env
 3. Install dependencies:
    ```bash
+   cd pupil
    python -m pip install -r requirements.txt
 4. Make sure you have pupil_env in your interpreter path.
 ## Data Description
