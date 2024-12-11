@@ -6,9 +6,9 @@ This project involves analyzing gaze and fixation data collected using Pupil Lab
 ### Project folder
 - **src/**: Contains the main project files.
   - `main.py`: The entry point of the project.
-  - `utils/`: Includes helper scripts and preprocessing functions.
+  - **utils/**: Includes helper scripts and preprocessing functions.
     - `preprocessing.py`: Handles cleaning, filtering, and preprocessing of gaze and fixation data.
-  - `custom_plugins/`: A directory to store custom plugins for Pupil Labs (default: empty)
+  - **custom_plugins/**: A directory to store custom plugins for Pupil Labs (default: empty)
 - **data/**: Directory for raw and processed data.
 - **results/**: Output files such as visualizations and analysis summaries.
 - `README.md`: Documentation for the project.
