@@ -19,6 +19,9 @@ This project involves analyzing gaze and fixation data collected using Pupil Lab
 Note 1: I strongly recommend checking out pupil labs' documentation first, this project relies on their open-source code.
 
 Note 2: I recommend creating a virtual environment for this (step 2).
+
+Note 3: Python 3.10.11 is used to develop this project, I recommend you use the same.
+
 1. Clone pupil's repository to your local machine (while in a preferred folder).
    ```bash
    git clone https://github.com/pupil-labs/pupil.git
