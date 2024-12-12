@@ -1,18 +1,24 @@
-from plugin import Plugin_List
-
 import setup
 import os
 import subprocess
 import sys
 from pathlib import Path
+import numpy as np
 
+from shared_modules.plugin import Plugin_List
 from shared_modules.video_export.plugins.world_video_exporter import World_Video_Exporter
+from shared_modules.video_export.plugins.world_video_exporter import _export_world_video
 
-
-project_root = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(os.path.abspath(__file__)) # This is the path to the project directory
 
 class GlobalContainer: #Initation of a PL container, see PLs docs for more info
-    pass
+    def __init__(self):
+        self.plugin_by_name = {}  # Initialize as empty
+        self.plugins = None  # To be set later by Plugin_List
+        self.rec_dir = None  # Path to the recording directory
+        self.user_dir = None  # Path to the user directory
+        self.min_data_confidence = 0.5  # Default confidence threshold
+        self.topics = {}  # Add topics as an empty dictionary
 
 class Preprocessor:
     def __init__(self, input_dir, output_dir=None, plugin_dir = None):
@@ -56,7 +62,6 @@ class Preprocessor:
                 '/data/ZS111/REC_ET/PL/004'
             ]
         """
-        import os  # Ensure os is imported if not globally
 
         if not os.path.exists(self.input_dir) or not os.path.isdir(self.input_dir):
             raise ValueError(f"Invalid input directory: {self.input_dir}")
@@ -93,126 +98,167 @@ class Preprocessor:
         return video_folders
 
 
-    def process_vid(self):
-
-        vid_list = self.get_folders()
-        g_pool = GlobalContainer()
-        g_pool.rec_dir = self.input_dir()
-        g_pool.user_dir = self.plugin_dir()
-        g_pool.min_data_confidence = 0.5
-        g_pool.plugins = Plugin_List(g_pool, plugin_initializers=)
-        exporter = World_Video_Exporter(g_pool)
 
 
+    def export_vid(self, vid_dir):
+        """
+        Replaces the existing export_vid function to utilize _export_world_video
+        for a comprehensive export process.
+        """
+        # Paths and directories
+        rec_dir = self.input_dir  # Directory containing the recording
+        user_dir = self.plugin_dir  # Directory for user plugins
+        out_file_path = os.path.join(vid_dir, "exported_world.mp4")  # Exported video path
+        min_data_confidence = 0.5  # Minimum confidence threshold
+
+        # Ensure world_timestamps.npy exists and calculate total frames
+        timestamps_path = os.path.join(rec_dir, "world_timestamps.npy")
+        if not os.path.exists(timestamps_path):
+            raise FileNotFoundError(f"Timestamps file not found: {timestamps_path}")
+
+        timestamps = np.load(timestamps_path)
+        total_frames = len(timestamps)
+        export_range = (0, total_frames)  # Export entire video range
+
+        # Plugin initializers
+        plugin_initializers = [
+            {
+                "name": "Offline_Fixation_Detector",
+                "args": {
+                    "max_dispersion": 1.50,  # angle, degrees
+                    "min_duration": 80,  # ms
+                    "max_duration": 600,  # ms
+                    "show_fixations": True,
+                },
+            },
+            {
+                "name": "vis_circle",
+                "args": {
+                    "color": (0.0, 0.7, 0.0, 0.1),  # RGBA color for visualizations
+                },
+            },
+            {
+                "name": "raw_data_exporter",
+                "args": {},
+            },
+        ]
+
+        # Pre-computed eye data (can be extended if necessary)
+        pre_computed_eye_data = {
+            "pupil": {
+                "data": [],
+                "bisector_class": "PupilDataBisector",
+                "data_ts": []  # Add this key
+            },
+            "gaze": {
+                "data": [],
+                "bisector_class": "Bisector",
+                "data_ts": []  # Add this key
+            },
+            "fixations": {
+                "data": [],
+                "affiliator_class": "Affiliator",
+                "data_ts": []  # Add this key
+            },
+        }
+
+        # Call the _export_world_video function
+        export_gen = _export_world_video(
+            rec_dir=rec_dir,
+            user_dir=user_dir,
+            min_data_confidence=min_data_confidence,
+            start_frame=export_range[0],
+            end_frame=export_range[1],
+            plugin_initializers=plugin_initializers,
+            out_file_path=out_file_path,
+            pre_computed_eye_data=pre_computed_eye_data,
+        )
+
+        # Handle the generator output (progress updates)
+        try:
+            for status, progress in export_gen:
+                print(f"Status: {status}, Progress: {progress}")
+        except Exception as e:
+            print(f"An error occurred during export: {e}")
+        else:
+            print(f"Video successfully exported to {out_file_path}")
 
 
-#עכשיו צריך להוסיף פה את כל הפלאגינים וההגדרות שלהם
+# Example setup
+input_directory = r'C:\Users\yotam\Desktop\Studies\year 3\CTT Project\CTT Yotam Malachi\YotamMalachi\data\YY404\REC_ET\PL\007'
+output_directory = r'C:\Users\yotam\Desktop\Studies\year 3\CTT Project\CTT Yotam Malachi\CTT Code YM\test'
+vid_directory = r'C:\Users\yotam\Desktop\Studies\year 3\CTT Project\CTT Code YM\test'
+
+# Create an instance of Preprocessor
+preprocessor = Preprocessor(input_dir=input_directory, output_dir=output_directory)
+
+# Call the export_vid function
+try:
+    preprocessor.export_vid(vid_dir=vid_directory)
+    print(f"Video successfully exported to {vid_directory}")
+except Exception as e:
+    print(f"An error occurred: {e}")
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#     def export_vid(self, vid_dir):
 #
-# def process_video_dirs(dir_list, pupil_player_path, output_base_dir):
-#     """
-#     Processes a list of directories in Pupil Player with static parameters
-#     and exports the results to a "Trail B Data" folder, with subfolders for each subject.
+#         g_pool = GlobalContainer()
+#         g_pool.rec_dir = self.input_dir
+#         g_pool.user_dir = self.plugin_dir
+#         g_pool.min_data_confidence = 0.5
 #
-#     Parameters:
-#         dir_list (list): List of directory paths to process.
-#         pupil_player_path (str): Path to the Pupil Player executable.
-#         output_base_dir (str): Base directory where "Trail B Data" will be created.
-#     """
-#     # Static parameters for the auto-fixation plugin
-#     fixation_params = {
-#         "min_fixation_time": 100,
-#         "max_fixation_time": 600,
-#         "max_dispersion": 1.5,
-#     }
+#         # Retrieve total frames using world_timestamps.npy
+#         timestamps_path = os.path.join(g_pool.rec_dir, 'world_timestamps.npy')
+#         if not os.path.exists(timestamps_path):
+#             raise FileNotFoundError(f"Timestamps file not found: {timestamps_path}")
 #
-#     # Static parameters for the gaze circle
-#     gaze_circle_params = {
-#         "radius": 20,
-#         "stroke_width": 1,
-#         "red": 0,
-#         "green": 0.7,
-#         "blue": 0,
-#         "alpha": 0.1,
-#     }
+#         total_frames = len(np.load(timestamps_path))
+#         export_range = (0, total_frames)  # Entire video range
 #
-#     # Static parameters for the visualization polyline
-#     vis_polyline_params = {
-#         "line_thickness": 1,
-#         "red": 1,
-#         "green": 0,
-#         "blue": 0,
-#         "gaze_history": 0,
-#     }
+#         # Define plugin initializers
+#         initializers = [
+#             {
+#                 "name": "Offline_Fixation_Detector",
+#                 "args": {"max_dispersion": 1.50, # angle, degrees
+#                          "min_duration": 80, # ms
+#                          "max_duration": 600, # ms
+#                          "show_fixations": True
+#                          }
+#             },
 #
-#     # Ensure the base output directory exists
-#     trail_b_dir = os.path.join(output_base_dir, "Trail B Data")
-#     os.makedirs(trail_b_dir, exist_ok=True)
+#             {
+#                 "name": "raw_data_exporter",
+#                 "args": {"g_pool": g_pool}
+#             },
 #
-#     for video_dir in dir_list:
-#         # Ensure the directory exists
-#         if not os.path.exists(video_dir):
-#             print(f"Directory not found: {video_dir}")
-#             continue
-#
-#         # Extract the subject's folder name from three levels up
-#         subject_name = os.path.basename(os.path.dirname(os.path.dirname(os.path.dirname(video_dir))))
-#         subject_dir = os.path.join(trail_b_dir, subject_name)
-#
-#         # Create a folder for this subject
-#         os.makedirs(subject_dir, exist_ok=True)
-#
-#         # Build the command to launch Pupil Player with the specific parameters
-#         command = [
-#             pupil_player_path,
-#             video_dir,  # Load the directory into Pupil Player
-#             "--auto-fixation-plugin",
-#             f"{fixation_params['min_fixation_time']} {fixation_params['max_fixation_time']} {fixation_params['max_dispersion']}",
-#             "--gaze-circle",
-#             f"{gaze_circle_params['radius']} {gaze_circle_params['stroke_width']} {gaze_circle_params['red']} {gaze_circle_params['green']} {gaze_circle_params['blue']} {gaze_circle_params['alpha']}",
-#             "--vis-polyline",
-#             f"{vis_polyline_params['line_thickness']} {vis_polyline_params['red']} {vis_polyline_params['green']} {vis_polyline_params['blue']} {vis_polyline_params['gaze_history']}",
-#             "--export",  # Trigger export
-#             "--export-path", subject_dir  # Ensure export to the correct subject folder
+#             {
+#                 "name": "vis_circle",
+#                 "args": {"g_pool": g_pool,
+#                          "color": (0.0, 0.7, 0.0, 0.1)
+#                          }
+#             }
 #         ]
+#         g_pool.plugins = Plugin_List(g_pool, plugin_initializers= initializers)
+#         exporter = World_Video_Exporter(g_pool)
+#         exporter.export_data(export_range, vid_dir)
 #
-#         # Print command for debugging purposes
-#         print("Running command:", " ".join(command))
 #
-#         # Run the command to process the directory
-#         try:
-#             subprocess.run(command, check=True)
-#             print(f"Processed and exported for subject: {subject_name}")
-#         except subprocess.CalledProcessError as e:
-#             print(f"Error processing {video_dir}: {e}")
+# # Example setup
+# input_directory = r'C:\Users\yotam\Desktop\Studies\year 3\CTT Project\CTT Yotam Malachi\YotamMalachi\data\YY404\REC_ET\PL\007'  # Replace with your actual input directory
+# output_directory = r'C:\Users\yotam\Desktop\Studies\year 3\CTT Project\CTT Yotam Malachi\CTT Code YM\test'  # Replace with your desired output directory
+# vid_directory = r'C:\Users\yotam\Desktop\Studies\year 3\CTT Project\CTT Yotam Malachi\YotamMalachi\data\YY404\REC_ET\PL\007'  # Replace with your desired export directory
+
+
+
+
+
+
+# # Create an instance of Preprocessor
+# preprocessor = Preprocessor(input_dir=input_directory, output_dir=output_directory)
 #
-# # Example usage
-# dir_list = [
-#     r'F:\YotamMalachi\data\AS970\REC_ET\PL\006'
-# ]
-# pupil_player_path = r"D:\CTT Project\Pupil Player v3.5.1\pupil_player.exe"
-# output_base_dir = r"F:\YotamMalachi"  # Base directory where "Trail B Data" will be created
-#
-# process_video_dirs(dir_list, pupil_player_path, output_base_dir)
+# # Call the export_vid function
+# try:
+#     preprocessor.export_vid(vid_dir=vid_directory)
+#     print(f"Video successfully exported to {vid_directory}")
+# except Exception as e:
+#     print(f"An error occurred: {e}")
