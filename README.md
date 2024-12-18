@@ -9,6 +9,7 @@ This project involves analyzing gaze and fixation data collected using Pupil Lab
   - **utils/**: Includes helper scripts and preprocessing functions.
     - `preprocessing.py`: Handles cleaning, filtering, and preprocessing of gaze and fixation data.
   - **custom_plugins/**: A directory to store custom plugins for Pupil Labs (default: empty)
+- **setup/** : Contains GlobalContainer and other core classes
 - **data/**: Directory for raw and processed data.
 - **results/**: Output files such as visualizations and analysis summaries.
 - `README.md`: Documentation for the project.
