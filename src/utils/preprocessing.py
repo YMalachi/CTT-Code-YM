@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 
 from video_export.plugins.world_video_exporter import World_Video_Exporter
-
+from video_capture import File_Source
 
 class Preprocessor:
     def __init__(self, g_pool, output_dir=None):
@@ -50,39 +50,28 @@ class Preprocessor:
         return output_structure
 
 
+    def export_vid_for_subject(self, plugin_initializers):
+        from shared_modules.plugin import Plugin_List
 
-    def export_vid_for_subject(self, subject_folder, subject_output_dir):
-        """
-        Exports the world video for a specific subject to their output directory.
-        :param subject_folder: The input folder for the subject's data.
-        :param subject_output_dir: The output folder for the subject's data.
-        """
-        # Set the recording directory to the subject folder
-        self.g_pool.rec_dir = subject_folder
-
+        # Determine what would be the last frame of the vid:
         # Ensure world_timestamps.npy exists
         timestamps_path = os.path.join(self.g_pool.rec_dir, "world_timestamps.npy")
         if not os.path.exists(timestamps_path):
             raise FileNotFoundError(f"Timestamps file not found: {timestamps_path}")
+        timestamps = np.load(timestamps_path) # load timestamps
 
-        # Load timestamps and calculate total frames
-        timestamps = np.load(timestamps_path)
-        total_frames = len(timestamps)
-        export_range = (0, total_frames)
+        start_frame = 0
+        end_frame = len(timestamps) - 1
+        export_range = (start_frame,end_frame)
+        export_dir = self.output_dir
 
-        # Ensure the output directory exists
-        os.makedirs(subject_output_dir, exist_ok=True)
+        # Updates plugins dynamically
+        self.g_pool.plugins = Plugin_List(self.g_pool, plugin_initializers=plugin_initializers)
 
-        # Create an instance of World_Video_Exporter
+        # Export video
         exporter = World_Video_Exporter(self.g_pool)
+        exporter.export_data(export_range,export_dir)
 
-        # Use the export_data function
-        try:
-            export_dir = subject_output_dir
-            exporter.export_data(export_range, export_dir)
-            print(f"Video successfully exported to {export_dir}")
-        except Exception as e:
-            print(f"An error occurred during export: {e}")
 
     def export_all(self):
         """
