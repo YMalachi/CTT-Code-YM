@@ -1,10 +1,13 @@
 import os
+from ctypes import pythonapi
 from pathlib import Path
 import numpy as np
 import pandas as pd
 import av
 import time
 import logging
+import cv2
+from pandas.core.indexing import convert_from_missing_indexer_tuple
 
 # Our own libraries
 from CoreClasses import DataContainer,ProcessingContainer
@@ -153,7 +156,7 @@ class VideoPreprocessor: # instead of inheriting ProcessingContainer im passing 
             logging.warning(f"There are not enough video directories in {self.pl_path}. Check for mismatches.")
 
         # Extracting the creation timestamp
-        uni_file_dict = {} # a dictionary to save file modification tampstamps (key:value)=(file_name:timestamp)
+        uni_file_dict = {} # a dictionary to save file modification timestamps (key:value)=(file_name:timestamp)
         for file in unity_file_check_list:
             file_path = os.path.join(self.uni_path, file)
             uni_file_dict[file] = os.path.getmtime(file_path)
@@ -184,9 +187,103 @@ class VideoPreprocessor: # instead of inheriting ProcessingContainer im passing 
             logging.error(f"An error occurred: {e}")
         return sync_dict
 
-# #test
+
+
+    def _get_fixations_ts(self):
+        """
+        This function is an internal function. It is called within the video trimming function and possibly others in the future.
+        :return: A fixations dictionary that contains data in the form of {"fixation id" : (start frame of fixation,end frame of fixation)}.
+        """
+        fixations_dict = {}
+        df = pd.read_csv(self.pl_fixations)
+        df = df.iloc[:-3] # idk if this is good for all test subjects but it is for AN755
+        print("remember to check the df iloc slicing with other subjects as well (if cutting out 3 rows is good)")
+        fixations_id = df['id'].astype(int)
+        fixation_start = df['start_frame_index']
+        fixations_end = df['end_frame_index']
+
+        for _id in fixations_id: # saving for each fixation id (key) its start and end time as a tuple (start, end)
+            fixations_dict[_id] = (fixation_start.iloc[_id].astype(int), fixations_end.iloc[_id].astype(int))
+
+        return fixations_dict
+
+    def _merge_neighboring_fixations(self, fixation_dict, threshold=5):
+        """
+        This is an internal function designed to merge consecutive fixations that are close in time, based on the following logic:
+        If the end of fixation(i) is within a specified threshold (in frames) from the start of fixation(i+1), the fixations are merged.
+        The grouping process continues until:
+        The total duration of the grouped fixations reaches exactly 180 frames, or
+        Adding another fixation causes the total duration to exceed the 180 frames limit.
+        If adding a fixation exceeds the 180 frames mark, it will not be included in the group. The remaining frames required to reach 180 will be padded with black frames later. This ensures a consistent snippet length of 180 frames across the entire project.
+        :param fixation_dict: fixation dictionary in the correct format
+        :param threshold: the frame threshold that below it fixations will be grouped.
+        :return: merged fixations dictionary of {group id : (start frame, end frame).
+        """
+        merged_fixations_dict = {}
+        snippet_fixed_length = 180
+        current_snippet_length = 0
+        fixations_amount = 0
+        group_id = 0
+        idx = 0
+        print(len(fixation_dict.keys())-1)
+        while idx < len(fixation_dict.keys())-1:
+            # current fixation data
+            start_frame_current_fixation = fixation_dict[idx][0]
+            end_frame_current_fixation = fixation_dict[idx][1]
+            # next fixation data
+            start_frame_next_fixation = fixation_dict[idx+1][0]
+            end_frame_next_fixation = fixation_dict[idx+1][1]
+
+            delta_frames = start_frame_next_fixation - end_frame_current_fixation
+
+            if current_snippet_length == 0: # add the first fixation to the length
+                fixation_length = end_frame_current_fixation - start_frame_current_fixation # unit is frames
+                merged_fixations_dict[group_id] = (start_frame_current_fixation, end_frame_current_fixation)
+                current_snippet_length += fixation_length
+                fixations_amount += 1
+                idx += 1
+            elif delta_frames <= threshold: # add fixations within the threshold
+                fixation_length = end_frame_next_fixation - end_frame_current_fixation
+                snippet_length_if_grouped = current_snippet_length + fixation_length
+                if snippet_length_if_grouped <= snippet_fixed_length:
+                    merged_fixations_dict[group_id] = (merged_fixations_dict[group_id][0], fixation_dict[idx+1][1])
+                    current_snippet_length += fixation_length
+                    fixations_amount += 1
+                    idx += 1
+                elif snippet_length_if_grouped > snippet_fixed_length and idx+1 == len(fixation_dict.keys()):
+                    # this handles the case in which the fixation group would be longer than 180 frames, but the next fixation would be the last fixation
+                    group_id += 1
+                    fixations_amount = 1
+                    merged_fixations_dict[group_id] = (start_frame_next_fixation, end_frame_next_fixation)
+                    idx += 1
+                else: # (if this snippet length exceeds 180 frames and is not the last fixation)
+                    group_id += 1 # creates key for the next fixations group in the merged dictionary
+                    fixations_amount = 0
+                    current_snippet_length = 0
+                    idx += 1
+                    continue
+            else: # (this code block is accessed only if there are no temporal close fixations)
+                group_id += 1
+                fixations_amount = 0
+                current_snippet_length = 0
+                continue
+        return merged_fixations_dict
+
+
+
+
+
+# #test laptop
 # data = DataContainer(data_path=r'C:\Users\yotam\Desktop\Studies\year 3\CTT Project\CTT Yotam Malachi\YotamMalachi\data')
 # subject_name = 'AN755'
 # processing = ProcessingContainer(data_path=data.data_path, subject_name=subject_name)
 # vid_pro = VideoPreprocessor(processing, trail='T2')
 # vid_pro.match_pl_uni()
+#test home
+data = DataContainer(data_path=r'F:\YotamMalachi\data')
+subject_name = 'AN755'
+processing = ProcessingContainer(data_path=data.data_path, subject_name=subject_name)
+vid_pro = VideoPreprocessor(processing, trail='T2')
+#vid_pro.match_pl_uni()
+fix_dict = vid_pro._get_fixations_ts()
+vid_pro._merge_neighboring_fixations(fix_dict)

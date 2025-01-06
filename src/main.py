@@ -9,11 +9,11 @@ from video_capture import File_Source
 
 # Project imports (written by us)
 from utils.preprocessing import Preprocessor
-from setup.CoreClasses import GlobalContainer
+
 from utils.gpool_initializers import (initialize_basic_gpool,
                                       add_capture_to_gpool,
                                       initialize_plugins,
-                                      initialize_data_for_pre_computation
+
                                       )
 
 # Defining params
@@ -116,7 +116,7 @@ def main():
     # Initialize g_pool and attributes
     g_pool = initialize_basic_gpool(input_dir, plugin_dir)
     add_capture_to_gpool(g_pool)
-    initialize_data_for_pre_computation(g_pool)
+    #initialize_data_for_pre_computation(g_pool)
     initialize_plugins(g_pool, plugin_initializers)
 
     # Initialize Preprocessor
