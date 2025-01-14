@@ -10,11 +10,11 @@ from video_capture import File_Source
 # Project imports (written by us)
 from utils.preprocessing import Preprocessor
 
-from utils.gpool_initializers import (initialize_basic_gpool,
-                                      add_capture_to_gpool,
-                                      initialize_plugins,
-
-                                      )
+# from utils.gpool_initializers import (initialize_basic_gpool,
+#                                       add_capture_to_gpool,
+#                                       initialize_plugins,
+#
+#                                       )
 
 # Defining params
 plugin_initializers = [

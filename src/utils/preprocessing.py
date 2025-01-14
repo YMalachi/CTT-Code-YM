@@ -18,49 +18,49 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
-class Preprocessor:
-    def __init__(self, input_dir, output_dir=None):
-        """
-        Initializes the Preprocessor with a shared g_pool object and output directory.
-        :param g_pool: The GlobalContainer object holding global paths and state.
-        :param output_dir: The directory to store processed data. Defaults to 'data' inside the project's directory.
-        """
-        self.input_dir = input_dir
-        self.output_dir = output_dir or os.path.join(os.getcwd(), 'data')
-
-    def get_subject_folders(self):
-        """
-        Retrieves subject folders from the input directory (g_pool.rec_dir).
-
-        Output:
-            list: A list of subject folder paths.
-        """
-        if not os.path.exists(self.g_pool.rec_dir) or not os.path.isdir(self.g_pool.rec_dir):
-            raise ValueError(f"Invalid input directory: {self.g_pool.rec_dir}")
-
-        return [
-            os.path.join(self.g_pool.rec_dir, subject_folder)
-            for subject_folder in os.listdir(self.g_pool.rec_dir)
-            if os.path.isdir(os.path.join(self.g_pool.rec_dir, subject_folder))
-        ]
-
-    def create_output_structure(self):
-        """
-        Creates an output directory structure for each subject folder in g_pool.rec_dir.
-
-        Output:
-            dict: A mapping of subject IDs to their corresponding output directories.
-        """
-        subject_folders = self.get_subject_folders()
-        output_structure = {}
-
-        for subject_folder in subject_folders:
-            subject_id = os.path.basename(subject_folder)
-            subject_output_dir = os.path.join(self.output_dir, subject_id)
-            Path(subject_output_dir).mkdir(parents=True, exist_ok=True)
-            output_structure[subject_id] = subject_output_dir
-
-        return output_structure
+# class Preprocessor:
+#     def __init__(self, input_dir, output_dir=None):
+#         """
+#         Initializes the Preprocessor with a shared g_pool object and output directory.
+#         :param g_pool: The GlobalContainer object holding global paths and state.
+#         :param output_dir: The directory to store processed data. Defaults to 'data' inside the project's directory.
+#         """
+#         self.input_dir = input_dir
+#         self.output_dir = output_dir or os.path.join(os.getcwd(), 'data')
+#
+#     def get_subject_folders(self):
+#         """
+#         Retrieves subject folders from the input directory (g_pool.rec_dir).
+#
+#         Output:
+#             list: A list of subject folder paths.
+#         """
+#         if not os.path.exists(self.g_pool.rec_dir) or not os.path.isdir(self.g_pool.rec_dir):
+#             raise ValueError(f"Invalid input directory: {self.g_pool.rec_dir}")
+#
+#         return [
+#             os.path.join(self.g_pool.rec_dir, subject_folder)
+#             for subject_folder in os.listdir(self.g_pool.rec_dir)
+#             if os.path.isdir(os.path.join(self.g_pool.rec_dir, subject_folder))
+#         ]
+#
+#     def create_output_structure(self):
+#         """
+#         Creates an output directory structure for each subject folder in g_pool.rec_dir.
+#
+#         Output:
+#             dict: A mapping of subject IDs to their corresponding output directories.
+#         """
+#         subject_folders = self.get_subject_folders()
+#         output_structure = {}
+#
+#         for subject_folder in subject_folders:
+#             subject_id = os.path.basename(subject_folder)
+#             subject_output_dir = os.path.join(self.output_dir, subject_id)
+#             Path(subject_output_dir).mkdir(parents=True, exist_ok=True)
+#             output_structure[subject_id] = subject_output_dir
+#
+#         return output_structure
 
 def validate_path(path, error_message):
     if not os.path.exists(path):
@@ -78,6 +78,7 @@ class VideoPreprocessor: # instead of inheriting ProcessingContainer im passing 
         self.data_path = parent.data_path
         self.pl_path = parent.pl_path
         self.uni_path = parent.uni_path
+        self.out_path = parent.out_path
         self.uni_trail_name = self.subject_name + '_' + trail + '.txt'
         self.uni_trail_path = os.path.join(self.uni_path, self.uni_trail_name) # this is the path to unity's trail file
         # Creating a synchronized dict of matching Unity files and PL directory (for each trail there is one of each)
@@ -207,7 +208,8 @@ class VideoPreprocessor: # instead of inheriting ProcessingContainer im passing 
 
         return fixations_dict
 
-    def _merge_neighboring_fixations(self, fixation_dict, threshold=5):
+    @staticmethod
+    def _merge_neighboring_fixations(fixation_dict, threshold=5):
         """
         This is an internal function designed to merge consecutive fixations that are close in time, based on the following logic:
         If the end of fixation(i) is within a specified threshold (in frames) from the start of fixation(i+1), the fixations are merged.
@@ -217,7 +219,7 @@ class VideoPreprocessor: # instead of inheriting ProcessingContainer im passing 
         If adding a fixation exceeds the 180 frames mark, it will not be included in the group. The remaining frames required to reach 180 will be padded with black frames later. This ensures a consistent snippet length of 180 frames across the entire project.
         :param fixation_dict: fixation dictionary in the correct format
         :param threshold: the frame threshold that below it fixations will be grouped.
-        :return: merged fixations dictionary of {group id : (start frame, end frame).
+        :return: merged fixations dictionary of {group id : (start frame, end frame)}.
         """
         merged_fixations_dict = {}
         snippet_fixed_length = 180
@@ -225,7 +227,6 @@ class VideoPreprocessor: # instead of inheriting ProcessingContainer im passing 
         fixations_amount = 0
         group_id = 0
         idx = 0
-        print(len(fixation_dict.keys())-1)
         while idx < len(fixation_dict.keys())-1:
             # current fixation data
             start_frame_current_fixation = fixation_dict[idx][0]
@@ -236,18 +237,19 @@ class VideoPreprocessor: # instead of inheriting ProcessingContainer im passing 
 
             delta_frames = start_frame_next_fixation - end_frame_current_fixation
 
-            if current_snippet_length == 0: # add the first fixation to the length
+            if current_snippet_length == 0:
                 fixation_length = end_frame_current_fixation - start_frame_current_fixation # unit is frames
                 merged_fixations_dict[group_id] = (start_frame_current_fixation, end_frame_current_fixation)
-                current_snippet_length += fixation_length
+                current_snippet_length = fixation_length
                 fixations_amount += 1
-                idx += 1
+                #idx += 1
+                continue
             elif delta_frames <= threshold: # add fixations within the threshold
                 fixation_length = end_frame_next_fixation - end_frame_current_fixation
                 snippet_length_if_grouped = current_snippet_length + fixation_length
                 if snippet_length_if_grouped <= snippet_fixed_length:
-                    merged_fixations_dict[group_id] = (merged_fixations_dict[group_id][0], fixation_dict[idx+1][1])
-                    current_snippet_length += fixation_length
+                    merged_fixations_dict[group_id] = (merged_fixations_dict[group_id][0], end_frame_next_fixation)
+                    current_snippet_length = merged_fixations_dict[group_id][1] - merged_fixations_dict[group_id][0]
                     fixations_amount += 1
                     idx += 1
                 elif snippet_length_if_grouped > snippet_fixed_length and idx+1 == len(fixation_dict.keys()):
@@ -266,8 +268,81 @@ class VideoPreprocessor: # instead of inheriting ProcessingContainer im passing 
                 group_id += 1
                 fixations_amount = 0
                 current_snippet_length = 0
+                idx+=1
                 continue
         return merged_fixations_dict
+
+
+    def _create_out_path_for_video_snippets(self):
+        """
+        Creates folder inside self.data_path.
+        :return: None
+        """
+        path = os.path.join(self.out_path, self.subject_name, 'video_snippets')
+        try:
+            os.makedirs(path, exist_ok=True)
+            self.vid_snippets_path = path
+            logging.info(f"Successfully created output folder for video snippets in {path}")
+        except OSError as e:
+            logging.error(f"Unable to create folder for video snippets in '{path}': {e}")
+
+    def trim_vid_around_fixations(self, merged_fixations_dict):
+        """
+        This function is used to trim the full videos around fixations. The trimming is exactly around fixations.
+        No extra frames are taken.
+        :param merged_fixations_dict: A dictionary containing merged fixations (outputted by _merge_neighboring_fixations function)
+        :return: A folder with video snippets that are trimmed around fixations frame indices.
+        """
+        TARGET_LENGTH = 180  # Length for neural network input
+
+        # consts and inits
+        num_of_fixations = len(merged_fixations_dict)
+        try:
+            full_video = cv2.VideoCapture(self.vid_path)
+            fps = int(full_video.get(cv2.CAP_PROP_FPS))
+            width = int(full_video.get(cv2.CAP_PROP_FRAME_WIDTH))
+            height = int(full_video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+            fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+
+            # pain loop. each fixation group is processed frame-by-frame in a nested loop
+            for fixation_group in range(num_of_fixations):
+                if fixation_group == 0: # create output folder in case this is the first snippet
+                    self._create_out_path_for_video_snippets()
+
+                # params for current fixation group
+                start_frame = merged_fixations_dict[fixation_group][0]
+                end_frame = merged_fixations_dict[fixation_group][1]
+                snippet_length = end_frame - start_frame + 1
+                padding_needed = TARGET_LENGTH - snippet_length
+                if padding_needed < 0:
+                    logging.error(f"Snippet length is more than 180 frames!")
+                    raise ValueError(f"Snippet length is more than 180 frames!")
+
+                # set video position and create snippet path
+                full_video.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
+                snippet_path = os.path.join(self.vid_snippets_path, f"snippet_{fixation_group}.mp4")
+                vid_snippet = cv2.VideoWriter(snippet_path, fourcc, fps, (width, height))
+
+                # write actual frames
+                for frame_number in range(start_frame, end_frame + 1):
+                    ret, frame = full_video.read()
+                    if not ret:
+                        logging.warning(f"Frame {frame_number} could not be read. Skipping.")
+                        break
+                    vid_snippet.write(frame)
+
+                # write padding frames (black frames)
+                black_frame = np.zeros((height, width, 3), dtype=np.uint8)
+                logging.info(f"Padding snippet {fixation_group} with {padding_needed} black frames.")
+                if padding_needed > 0:
+                    for pad in range(padding_needed):
+                        vid_snippet.write(black_frame)
+
+                vid_snippet.release()
+                logging.info(f"Video snippet {fixation_group} saved successfully at {snippet_path}.")
+        finally:
+            full_video.release()
+        logging.info("All video snippets created successfully.")
 
 
 
@@ -280,10 +355,14 @@ class VideoPreprocessor: # instead of inheriting ProcessingContainer im passing 
 # vid_pro = VideoPreprocessor(processing, trail='T2')
 # vid_pro.match_pl_uni()
 #test home
-data = DataContainer(data_path=r'F:\YotamMalachi\data')
-subject_name = 'AN755'
-processing = ProcessingContainer(data_path=data.data_path, subject_name=subject_name)
-vid_pro = VideoPreprocessor(processing, trail='T2')
-#vid_pro.match_pl_uni()
-fix_dict = vid_pro._get_fixations_ts()
-vid_pro._merge_neighboring_fixations(fix_dict)
+# data = DataContainer(data_path=r'F:\YotamMalachi\data')
+# subject_name = 'AN755'
+# processing = ProcessingContainer(data_path=data.data_path, subject_name=subject_name)
+# processing._create_out_path(r'F:\YotamMalachi')
+# vid_pro = VideoPreprocessor(processing, trail='T2')
+# #vid_pro.match_pl_uni()
+# fix_dict = vid_pro._get_fixations_ts()
+# merged_dict = vid_pro._merge_neighboring_fixations(fix_dict)
+# vid_pro.trim_vid_around_fixations(merged_dict)
+#
+# print(len(merged_dict))

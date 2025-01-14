@@ -1,7 +1,16 @@
 # Here I define core classes of the project, this serves as a base to most of the logic and tools.
 
 import os
+import logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
+def validate_path(path, error_message):
+    if not os.path.exists(path):
+        logging.error(error_message)
+        raise FileNotFoundError(error_message)
 
 class DataContainer:
     def __init__(self, data_path):
@@ -31,26 +40,20 @@ class ProcessingContainer(DataContainer):
         self.subject_name = subject_name
         self.default_flag = default_flag
         rec_path_intermediate = os.path.join(self.data_path, subject_name)
+
         self.rec_path = os.path.join(rec_path_intermediate, 'REC_ET')  # this is the first directory in each subject
-        if not os.path.isdir(self.rec_path): # check if it exists
-            raise FileNotFoundError(f"The required directory does not exist: {self.rec_path}")
+        validate_path(self.rec_path, f"The required directory does not exist: {self.rec_path}")
 
         if self.default_flag is True:
             # Construct and check paths
             try:
                 # PL paths
                 self.pl_path = os.path.join(self.rec_path, 'PL')
-                os.path.isdir(self.pl_path)
-                if not os.path.isdir(self.pl_path):
-                    raise FileNotFoundError(f"The required directory does not exist: {self.pl_path}")
+                validate_path(self.pl_path, f"The required directory does not exist: {self.pl_path}")
 
                 # Unity paths
                 self.uni_path = os.path.join(self.rec_path, 'UNI')
-                if not os.path.isdir(self.uni_path):
-                    raise FileNotFoundError(f"The required directory does not exist: {self.uni_path}")
-
-            except FileNotFoundError as e:
-                raise e
+                validate_path(self.uni_path,f"The required directory does not exist: {self.uni_path}")
 
             except Exception as e:
                 # catch any other unexpected errors
@@ -63,6 +66,19 @@ class ProcessingContainer(DataContainer):
         else:
             self.pl_path = pl_path
             self.uni_path = uni_path
+
+    def _create_out_path(self,output_path):
+        """
+        Creates a folder that will contain the output snippet videos for each test subject inside self.data_path.
+        :return: None
+        """
+        path = os.path.join(output_path, 'OUTPUTS')
+        try:
+            os.makedirs(path, exist_ok=True)
+            self.out_path = path
+            logging.info('Output folder was created in the provided path')
+        except OSError as e:
+            logging.error(f"Error creating folder '{path}': {e}")
 
 
 
