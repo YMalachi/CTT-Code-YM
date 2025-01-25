@@ -1,0 +1,869 @@
+{
+    "name": "DB188",
+    "videos": [
+        {
+            "snippet_path": "C:\\Users\\yotam\\Desktop\\Studies\\year 3\\CTT Project\\CTT Yotam Malachi\\CTT Code YM\\test\\OUTPUTS\\DB188\\video_snippets\\snippet_0.mp4",
+            "group_id": "group_0",
+            "start_frame": 0,
+            "end_frame": 174,
+            "total_fixations": 15,
+            "fixations": {
+                "fixation_0": {
+                    "start_frame": 0,
+                    "end_frame": 1,
+                    "duration": 2,
+                    "tag": null
+                },
+                "fixation_1": {
+                    "start_frame": 3,
+                    "end_frame": 17,
+                    "duration": 15,
+                    "tag": null
+                },
+                "fixation_2": {
+                    "start_frame": 17,
+                    "end_frame": 29,
+                    "duration": 13,
+                    "tag": null
+                },
+                "fixation_3": {
+                    "start_frame": 29,
+                    "end_frame": 43,
+                    "duration": 15,
+                    "tag": null
+                },
+                "fixation_4": {
+                    "start_frame": 43,
+                    "end_frame": 59,
+                    "duration": 17,
+                    "tag": null
+                },
+                "fixation_5": {
+                    "start_frame": 59,
+                    "end_frame": 74,
+                    "duration": 16,
+                    "tag": null
+                },
+                "fixation_6": {
+                    "start_frame": 74,
+                    "end_frame": 89,
+                    "duration": 16,
+                    "tag": null
+                },
+                "fixation_7": {
+                    "start_frame": 89,
+                    "end_frame": 99,
+                    "duration": 11,
+                    "tag": null
+                },
+                "fixation_8": {
+                    "start_frame": 104,
+                    "end_frame": 108,
+                    "duration": 5,
+                    "tag": null
+                },
+                "fixation_9": {
+                    "start_frame": 108,
+                    "end_frame": 111,
+                    "duration": 4,
+                    "tag": null
+                },
+                "fixation_10": {
+                    "start_frame": 128,
+                    "end_frame": 133,
+                    "duration": 6,
+                    "tag": null
+                },
+                "fixation_11": {
+                    "start_frame": 135,
+                    "end_frame": 138,
+                    "duration": 4,
+                    "tag": null
+                },
+                "fixation_12": {
+                    "start_frame": 138,
+                    "end_frame": 145,
+                    "duration": 8,
+                    "tag": null
+                },
+                "fixation_13": {
+                    "start_frame": 145,
+                    "end_frame": 159,
+                    "duration": 15,
+                    "tag": null
+                },
+                "fixation_14": {
+                    "start_frame": 160,
+                    "end_frame": 174,
+                    "duration": 15,
+                    "tag": null
+                }
+            }
+        },
+        {
+            "snippet_path": "C:\\Users\\yotam\\Desktop\\Studies\\year 3\\CTT Project\\CTT Yotam Malachi\\CTT Code YM\\test\\OUTPUTS\\DB188\\video_snippets\\snippet_1.mp4",
+            "group_id": "group_1",
+            "start_frame": 175,
+            "end_frame": 348,
+            "total_fixations": 15,
+            "fixations": {
+                "fixation_0": {
+                    "start_frame": 0,
+                    "end_frame": 1,
+                    "duration": 2,
+                    "tag": null
+                },
+                "fixation_1": {
+                    "start_frame": 3,
+                    "end_frame": 17,
+                    "duration": 15,
+                    "tag": null
+                },
+                "fixation_2": {
+                    "start_frame": 17,
+                    "end_frame": 29,
+                    "duration": 13,
+                    "tag": null
+                },
+                "fixation_3": {
+                    "start_frame": 29,
+                    "end_frame": 43,
+                    "duration": 15,
+                    "tag": null
+                },
+                "fixation_4": {
+                    "start_frame": 43,
+                    "end_frame": 59,
+                    "duration": 17,
+                    "tag": null
+                },
+                "fixation_5": {
+                    "start_frame": 59,
+                    "end_frame": 74,
+                    "duration": 16,
+                    "tag": null
+                },
+                "fixation_6": {
+                    "start_frame": 74,
+                    "end_frame": 89,
+                    "duration": 16,
+                    "tag": null
+                },
+                "fixation_7": {
+                    "start_frame": 89,
+                    "end_frame": 99,
+                    "duration": 11,
+                    "tag": null
+                },
+                "fixation_8": {
+                    "start_frame": 104,
+                    "end_frame": 108,
+                    "duration": 5,
+                    "tag": null
+                },
+                "fixation_9": {
+                    "start_frame": 108,
+                    "end_frame": 111,
+                    "duration": 4,
+                    "tag": null
+                },
+                "fixation_10": {
+                    "start_frame": 128,
+                    "end_frame": 133,
+                    "duration": 6,
+                    "tag": null
+                },
+                "fixation_11": {
+                    "start_frame": 135,
+                    "end_frame": 138,
+                    "duration": 4,
+                    "tag": null
+                },
+                "fixation_12": {
+                    "start_frame": 138,
+                    "end_frame": 145,
+                    "duration": 8,
+                    "tag": null
+                },
+                "fixation_13": {
+                    "start_frame": 145,
+                    "end_frame": 159,
+                    "duration": 15,
+                    "tag": null
+                },
+                "fixation_14": {
+                    "start_frame": 160,
+                    "end_frame": 174,
+                    "duration": 15,
+                    "tag": null
+                },
+                "fixation_15": {
+                    "start_frame": 175,
+                    "end_frame": 186,
+                    "duration": 12,
+                    "tag": null
+                },
+                "fixation_16": {
+                    "start_frame": 201,
+                    "end_frame": 205,
+                    "duration": 5,
+                    "tag": null
+                },
+                "fixation_17": {
+                    "start_frame": 210,
+                    "end_frame": 215,
+                    "duration": 6,
+                    "tag": null
+                },
+                "fixation_18": {
+                    "start_frame": 215,
+                    "end_frame": 220,
+                    "duration": 6,
+                    "tag": null
+                },
+                "fixation_19": {
+                    "start_frame": 220,
+                    "end_frame": 231,
+                    "duration": 12,
+                    "tag": null
+                },
+                "fixation_20": {
+                    "start_frame": 232,
+                    "end_frame": 238,
+                    "duration": 7,
+                    "tag": null
+                },
+                "fixation_21": {
+                    "start_frame": 238,
+                    "end_frame": 249,
+                    "duration": 12,
+                    "tag": null
+                },
+                "fixation_22": {
+                    "start_frame": 249,
+                    "end_frame": 264,
+                    "duration": 16,
+                    "tag": null
+                },
+                "fixation_23": {
+                    "start_frame": 264,
+                    "end_frame": 278,
+                    "duration": 15,
+                    "tag": null
+                },
+                "fixation_24": {
+                    "start_frame": 284,
+                    "end_frame": 291,
+                    "duration": 8,
+                    "tag": null
+                },
+                "fixation_25": {
+                    "start_frame": 294,
+                    "end_frame": 304,
+                    "duration": 11,
+                    "tag": null
+                },
+                "fixation_26": {
+                    "start_frame": 326,
+                    "end_frame": 331,
+                    "duration": 6,
+                    "tag": null
+                },
+                "fixation_27": {
+                    "start_frame": 331,
+                    "end_frame": 335,
+                    "duration": 5,
+                    "tag": null
+                },
+                "fixation_28": {
+                    "start_frame": 335,
+                    "end_frame": 343,
+                    "duration": 9,
+                    "tag": null
+                },
+                "fixation_29": {
+                    "start_frame": 343,
+                    "end_frame": 348,
+                    "duration": 6,
+                    "tag": null
+                }
+            }
+        },
+        {
+            "snippet_path": "C:\\Users\\yotam\\Desktop\\Studies\\year 3\\CTT Project\\CTT Yotam Malachi\\CTT Code YM\\test\\OUTPUTS\\DB188\\video_snippets\\snippet_2.mp4",
+            "group_id": "group_2",
+            "start_frame": 348,
+            "end_frame": 513,
+            "total_fixations": 12,
+            "fixations": {
+                "fixation_0": {
+                    "start_frame": 0,
+                    "end_frame": 1,
+                    "duration": 2,
+                    "tag": null
+                },
+                "fixation_1": {
+                    "start_frame": 3,
+                    "end_frame": 17,
+                    "duration": 15,
+                    "tag": null
+                },
+                "fixation_2": {
+                    "start_frame": 17,
+                    "end_frame": 29,
+                    "duration": 13,
+                    "tag": null
+                },
+                "fixation_3": {
+                    "start_frame": 29,
+                    "end_frame": 43,
+                    "duration": 15,
+                    "tag": null
+                },
+                "fixation_4": {
+                    "start_frame": 43,
+                    "end_frame": 59,
+                    "duration": 17,
+                    "tag": null
+                },
+                "fixation_5": {
+                    "start_frame": 59,
+                    "end_frame": 74,
+                    "duration": 16,
+                    "tag": null
+                },
+                "fixation_6": {
+                    "start_frame": 74,
+                    "end_frame": 89,
+                    "duration": 16,
+                    "tag": null
+                },
+                "fixation_7": {
+                    "start_frame": 89,
+                    "end_frame": 99,
+                    "duration": 11,
+                    "tag": null
+                },
+                "fixation_8": {
+                    "start_frame": 104,
+                    "end_frame": 108,
+                    "duration": 5,
+                    "tag": null
+                },
+                "fixation_9": {
+                    "start_frame": 108,
+                    "end_frame": 111,
+                    "duration": 4,
+                    "tag": null
+                },
+                "fixation_10": {
+                    "start_frame": 128,
+                    "end_frame": 133,
+                    "duration": 6,
+                    "tag": null
+                },
+                "fixation_11": {
+                    "start_frame": 135,
+                    "end_frame": 138,
+                    "duration": 4,
+                    "tag": null
+                },
+                "fixation_12": {
+                    "start_frame": 138,
+                    "end_frame": 145,
+                    "duration": 8,
+                    "tag": null
+                },
+                "fixation_13": {
+                    "start_frame": 145,
+                    "end_frame": 159,
+                    "duration": 15,
+                    "tag": null
+                },
+                "fixation_14": {
+                    "start_frame": 160,
+                    "end_frame": 174,
+                    "duration": 15,
+                    "tag": null
+                },
+                "fixation_15": {
+                    "start_frame": 175,
+                    "end_frame": 186,
+                    "duration": 12,
+                    "tag": null
+                },
+                "fixation_16": {
+                    "start_frame": 201,
+                    "end_frame": 205,
+                    "duration": 5,
+                    "tag": null
+                },
+                "fixation_17": {
+                    "start_frame": 210,
+                    "end_frame": 215,
+                    "duration": 6,
+                    "tag": null
+                },
+                "fixation_18": {
+                    "start_frame": 215,
+                    "end_frame": 220,
+                    "duration": 6,
+                    "tag": null
+                },
+                "fixation_19": {
+                    "start_frame": 220,
+                    "end_frame": 231,
+                    "duration": 12,
+                    "tag": null
+                },
+                "fixation_20": {
+                    "start_frame": 232,
+                    "end_frame": 238,
+                    "duration": 7,
+                    "tag": null
+                },
+                "fixation_21": {
+                    "start_frame": 238,
+                    "end_frame": 249,
+                    "duration": 12,
+                    "tag": null
+                },
+                "fixation_22": {
+                    "start_frame": 249,
+                    "end_frame": 264,
+                    "duration": 16,
+                    "tag": null
+                },
+                "fixation_23": {
+                    "start_frame": 264,
+                    "end_frame": 278,
+                    "duration": 15,
+                    "tag": null
+                },
+                "fixation_24": {
+                    "start_frame": 284,
+                    "end_frame": 291,
+                    "duration": 8,
+                    "tag": null
+                },
+                "fixation_25": {
+                    "start_frame": 294,
+                    "end_frame": 304,
+                    "duration": 11,
+                    "tag": null
+                },
+                "fixation_26": {
+                    "start_frame": 326,
+                    "end_frame": 331,
+                    "duration": 6,
+                    "tag": null
+                },
+                "fixation_27": {
+                    "start_frame": 331,
+                    "end_frame": 335,
+                    "duration": 5,
+                    "tag": null
+                },
+                "fixation_28": {
+                    "start_frame": 335,
+                    "end_frame": 343,
+                    "duration": 9,
+                    "tag": null
+                },
+                "fixation_29": {
+                    "start_frame": 343,
+                    "end_frame": 348,
+                    "duration": 6,
+                    "tag": null
+                },
+                "fixation_30": {
+                    "start_frame": 348,
+                    "end_frame": 355,
+                    "duration": 8,
+                    "tag": null
+                },
+                "fixation_31": {
+                    "start_frame": 355,
+                    "end_frame": 364,
+                    "duration": 10,
+                    "tag": null
+                },
+                "fixation_32": {
+                    "start_frame": 365,
+                    "end_frame": 379,
+                    "duration": 15,
+                    "tag": null
+                },
+                "fixation_33": {
+                    "start_frame": 380,
+                    "end_frame": 395,
+                    "duration": 16,
+                    "tag": null
+                },
+                "fixation_34": {
+                    "start_frame": 395,
+                    "end_frame": 410,
+                    "duration": 16,
+                    "tag": null
+                },
+                "fixation_35": {
+                    "start_frame": 410,
+                    "end_frame": 425,
+                    "duration": 16,
+                    "tag": null
+                },
+                "fixation_36": {
+                    "start_frame": 425,
+                    "end_frame": 437,
+                    "duration": 13,
+                    "tag": null
+                },
+                "fixation_37": {
+                    "start_frame": 448,
+                    "end_frame": 461,
+                    "duration": 14,
+                    "tag": null
+                },
+                "fixation_38": {
+                    "start_frame": 461,
+                    "end_frame": 471,
+                    "duration": 11,
+                    "tag": null
+                },
+                "fixation_39": {
+                    "start_frame": 472,
+                    "end_frame": 480,
+                    "duration": 9,
+                    "tag": null
+                },
+                "fixation_40": {
+                    "start_frame": 480,
+                    "end_frame": 492,
+                    "duration": 13,
+                    "tag": null
+                },
+                "fixation_41": {
+                    "start_frame": 509,
+                    "end_frame": 513,
+                    "duration": 5,
+                    "tag": null
+                }
+            }
+        },
+        {
+            "snippet_path": "C:\\Users\\yotam\\Desktop\\Studies\\year 3\\CTT Project\\CTT Yotam Malachi\\CTT Code YM\\test\\OUTPUTS\\DB188\\video_snippets\\snippet_3.mp4",
+            "group_id": "group_3",
+            "start_frame": 513,
+            "end_frame": 618,
+            "total_fixations": 9,
+            "fixations": {
+                "fixation_0": {
+                    "start_frame": 0,
+                    "end_frame": 1,
+                    "duration": 2,
+                    "tag": null
+                },
+                "fixation_1": {
+                    "start_frame": 3,
+                    "end_frame": 17,
+                    "duration": 15,
+                    "tag": null
+                },
+                "fixation_2": {
+                    "start_frame": 17,
+                    "end_frame": 29,
+                    "duration": 13,
+                    "tag": null
+                },
+                "fixation_3": {
+                    "start_frame": 29,
+                    "end_frame": 43,
+                    "duration": 15,
+                    "tag": null
+                },
+                "fixation_4": {
+                    "start_frame": 43,
+                    "end_frame": 59,
+                    "duration": 17,
+                    "tag": null
+                },
+                "fixation_5": {
+                    "start_frame": 59,
+                    "end_frame": 74,
+                    "duration": 16,
+                    "tag": null
+                },
+                "fixation_6": {
+                    "start_frame": 74,
+                    "end_frame": 89,
+                    "duration": 16,
+                    "tag": null
+                },
+                "fixation_7": {
+                    "start_frame": 89,
+                    "end_frame": 99,
+                    "duration": 11,
+                    "tag": null
+                },
+                "fixation_8": {
+                    "start_frame": 104,
+                    "end_frame": 108,
+                    "duration": 5,
+                    "tag": null
+                },
+                "fixation_9": {
+                    "start_frame": 108,
+                    "end_frame": 111,
+                    "duration": 4,
+                    "tag": null
+                },
+                "fixation_10": {
+                    "start_frame": 128,
+                    "end_frame": 133,
+                    "duration": 6,
+                    "tag": null
+                },
+                "fixation_11": {
+                    "start_frame": 135,
+                    "end_frame": 138,
+                    "duration": 4,
+                    "tag": null
+                },
+                "fixation_12": {
+                    "start_frame": 138,
+                    "end_frame": 145,
+                    "duration": 8,
+                    "tag": null
+                },
+                "fixation_13": {
+                    "start_frame": 145,
+                    "end_frame": 159,
+                    "duration": 15,
+                    "tag": null
+                },
+                "fixation_14": {
+                    "start_frame": 160,
+                    "end_frame": 174,
+                    "duration": 15,
+                    "tag": null
+                },
+                "fixation_15": {
+                    "start_frame": 175,
+                    "end_frame": 186,
+                    "duration": 12,
+                    "tag": null
+                },
+                "fixation_16": {
+                    "start_frame": 201,
+                    "end_frame": 205,
+                    "duration": 5,
+                    "tag": null
+                },
+                "fixation_17": {
+                    "start_frame": 210,
+                    "end_frame": 215,
+                    "duration": 6,
+                    "tag": null
+                },
+                "fixation_18": {
+                    "start_frame": 215,
+                    "end_frame": 220,
+                    "duration": 6,
+                    "tag": null
+                },
+                "fixation_19": {
+                    "start_frame": 220,
+                    "end_frame": 231,
+                    "duration": 12,
+                    "tag": null
+                },
+                "fixation_20": {
+                    "start_frame": 232,
+                    "end_frame": 238,
+                    "duration": 7,
+                    "tag": null
+                },
+                "fixation_21": {
+                    "start_frame": 238,
+                    "end_frame": 249,
+                    "duration": 12,
+                    "tag": null
+                },
+                "fixation_22": {
+                    "start_frame": 249,
+                    "end_frame": 264,
+                    "duration": 16,
+                    "tag": null
+                },
+                "fixation_23": {
+                    "start_frame": 264,
+                    "end_frame": 278,
+                    "duration": 15,
+                    "tag": null
+                },
+                "fixation_24": {
+                    "start_frame": 284,
+                    "end_frame": 291,
+                    "duration": 8,
+                    "tag": null
+                },
+                "fixation_25": {
+                    "start_frame": 294,
+                    "end_frame": 304,
+                    "duration": 11,
+                    "tag": null
+                },
+                "fixation_26": {
+                    "start_frame": 326,
+                    "end_frame": 331,
+                    "duration": 6,
+                    "tag": null
+                },
+                "fixation_27": {
+                    "start_frame": 331,
+                    "end_frame": 335,
+                    "duration": 5,
+                    "tag": null
+                },
+                "fixation_28": {
+                    "start_frame": 335,
+                    "end_frame": 343,
+                    "duration": 9,
+                    "tag": null
+                },
+                "fixation_29": {
+                    "start_frame": 343,
+                    "end_frame": 348,
+                    "duration": 6,
+                    "tag": null
+                },
+                "fixation_30": {
+                    "start_frame": 348,
+                    "end_frame": 355,
+                    "duration": 8,
+                    "tag": null
+                },
+                "fixation_31": {
+                    "start_frame": 355,
+                    "end_frame": 364,
+                    "duration": 10,
+                    "tag": null
+                },
+                "fixation_32": {
+                    "start_frame": 365,
+                    "end_frame": 379,
+                    "duration": 15,
+                    "tag": null
+                },
+                "fixation_33": {
+                    "start_frame": 380,
+                    "end_frame": 395,
+                    "duration": 16,
+                    "tag": null
+                },
+                "fixation_34": {
+                    "start_frame": 395,
+                    "end_frame": 410,
+                    "duration": 16,
+                    "tag": null
+                },
+                "fixation_35": {
+                    "start_frame": 410,
+                    "end_frame": 425,
+                    "duration": 16,
+                    "tag": null
+                },
+                "fixation_36": {
+                    "start_frame": 425,
+                    "end_frame": 437,
+                    "duration": 13,
+                    "tag": null
+                },
+                "fixation_37": {
+                    "start_frame": 448,
+                    "end_frame": 461,
+                    "duration": 14,
+                    "tag": null
+                },
+                "fixation_38": {
+                    "start_frame": 461,
+                    "end_frame": 471,
+                    "duration": 11,
+                    "tag": null
+                },
+                "fixation_39": {
+                    "start_frame": 472,
+                    "end_frame": 480,
+                    "duration": 9,
+                    "tag": null
+                },
+                "fixation_40": {
+                    "start_frame": 480,
+                    "end_frame": 492,
+                    "duration": 13,
+                    "tag": null
+                },
+                "fixation_41": {
+                    "start_frame": 509,
+                    "end_frame": 513,
+                    "duration": 5,
+                    "tag": null
+                },
+                "fixation_42": {
+                    "start_frame": 513,
+                    "end_frame": 528,
+                    "duration": 16,
+                    "tag": null
+                },
+                "fixation_43": {
+                    "start_frame": 528,
+                    "end_frame": 543,
+                    "duration": 16,
+                    "tag": null
+                },
+                "fixation_44": {
+                    "start_frame": 543,
+                    "end_frame": 558,
+                    "duration": 16,
+                    "tag": null
+                },
+                "fixation_45": {
+                    "start_frame": 558,
+                    "end_frame": 573,
+                    "duration": 16,
+                    "tag": null
+                },
+                "fixation_46": {
+                    "start_frame": 573,
+                    "end_frame": 576,
+                    "duration": 4,
+                    "tag": null
+                },
+                "fixation_47": {
+                    "start_frame": 586,
+                    "end_frame": 590,
+                    "duration": 5,
+                    "tag": null
+                },
+                "fixation_48": {
+                    "start_frame": 590,
+                    "end_frame": 596,
+                    "duration": 7,
+                    "tag": null
+                },
+                "fixation_49": {
+                    "start_frame": 596,
+                    "end_frame": 609,
+                    "duration": 14,
+                    "tag": null
+                },
+                "fixation_50": {
+                    "start_frame": 610,
+                    "end_frame": 618,
+                    "duration": 9,
+                    "tag": null
+                }
+            }
+        }
+    ]
+}
