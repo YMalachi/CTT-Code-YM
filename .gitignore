@@ -5,3 +5,5 @@
 .idea/modules.xml
 .idea/vcs.xml
 src/utils/__pycache__/setup.cpython-310.pyc
+test/
+data/

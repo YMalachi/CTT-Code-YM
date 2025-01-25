@@ -11,6 +11,7 @@ from pandas.core.indexing import convert_from_missing_indexer_tuple
 
 # Our own libraries
 from CoreClasses import DataContainer,ProcessingContainer
+from src.utils.metadata_manager import MetadataManager
 
 # Initializing log
 logging.basicConfig(
@@ -68,11 +69,15 @@ def validate_path(path, error_message):
         raise FileNotFoundError(error_message)
 
 class VideoPreprocessor: # instead of inheriting ProcessingContainer im passing its attributes directly
-    def __init__(self, parent, trail):
+    def __init__(self, parent, trail, metadata_manager):
         """
         This class holds and utilize data for video processing.
+        :param parent: An instance of ProcessingContainer object.
         :param trail: Trail type (e.g. trail B)
+        :param metadata_manager: An instance of MetadataManager object.
         """
+        # Creating metadata
+        self.metadata_manager = metadata_manager
         # Creating the paths
         self.subject_name = parent.subject_name
         self.data_path = parent.data_path
@@ -129,7 +134,7 @@ class VideoPreprocessor: # instead of inheriting ProcessingContainer im passing 
         unity_file_check_list = [self.subject_name + "_Reference_Calibration_1.txt", self.subject_name + "_P1.txt", self.subject_name + "_P1A.txt", self.subject_name + "_T1.txt", self.subject_name + "_P2.txt", self.subject_name + "_P2A.txt", self.subject_name + "_T2.txt"] # these are the expected names
         unity_file_list = os.listdir(self.uni_path)
         if len(unity_file_list) >= len(unity_file_check_list):
-            logging.info(f"There are more files in {self.uni_path} than expected.")
+            logging.debug(f"There are more files in {self.uni_path} than expected.")
         for file in unity_file_check_list[:]:  # iterate over a copied list
             if file not in unity_file_list:
                 unity_file_check_list.remove(file)  # modify the original list
@@ -144,7 +149,7 @@ class VideoPreprocessor: # instead of inheriting ProcessingContainer im passing 
                     raise UserWarning(f"There is a missing file or a file with unexpected name in {self.uni_path}, file name: {file}")
             except UserWarning as w:
                 logging.warning(f"There is a missing file or a file with unexpected name in {self.uni_path}, file name: {file}")
-                logging.info(f"{file} have been removed from the Unity files list")
+                logging.debug(f"{file} have been removed from the Unity files list")
 
         # Now checking if there are enough video dirs in PL's data
         pl_dir_list = os.listdir(self.pl_path)
@@ -162,13 +167,11 @@ class VideoPreprocessor: # instead of inheriting ProcessingContainer im passing 
             file_path = os.path.join(self.uni_path, file)
             uni_file_dict[file] = os.path.getmtime(file_path)
 
-
         pl_dir_dict = {} # same but (dir_name:timestamps)
         for _dir in pl_dir_list:
             pl_file_path = os.path.join(self.pl_path, _dir)
             ts_path = os.path.join(pl_file_path, 'world_timestamps.npy') # using the timestamps is ideal because it is created in the same exact moment as the UNI files
             pl_dir_dict[_dir] = os.path.getmtime(ts_path)
-
         # Now creating a dict where (key:value) = (UNI file name:matching PL dir)
         # I also make sure the dictionaries are sorted by keys (this condition should be satisfied already, but it's kept for better readability
         uni_file_dict_list = sorted(uni_file_dict.items(), key= lambda item: item[1])
@@ -181,8 +184,10 @@ class VideoPreprocessor: # instead of inheriting ProcessingContainer im passing 
                 for i in range(len(uni_file_dict_list)):
                     sync_dict[uni_file_dict_list[i][0]] = pl_dir_dict_list[i][0]
             else:
-                raise ValueError(f"Mismatch between Unity files ({len(uni_file_dict_list)}) and PL directories ({len(pl_dir_dict_list)}).")
-        except ValueError:
+                logging.warning(f"Mismatch between Unity files ({len(uni_file_dict_list)}) and PL directories ({len(pl_dir_dict_list)}).")
+                for i in range(len(uni_file_dict_list)):
+                    sync_dict[uni_file_dict_list[i][0]] = pl_dir_dict_list[i][0]
+        except Warning:
             logging.error(f"Mismatch between Unity files ({len(uni_file_dict_list)}) and PL directories ({len(pl_dir_dict_list)}).")
         except Exception as e:
             logging.error(f"An error occurred: {e}")
@@ -205,11 +210,10 @@ class VideoPreprocessor: # instead of inheriting ProcessingContainer im passing 
 
         for _id in fixations_id: # saving for each fixation id (key) its start and end time as a tuple (start, end)
             fixations_dict[_id] = (fixation_start.iloc[_id].astype(int), fixations_end.iloc[_id].astype(int))
-
         return fixations_dict
 
     @staticmethod
-    def _merge_neighboring_fixations(fixation_dict, threshold=5):
+    def _merge_neighboring_fixations(fixation_dict, threshold=30):
         """
         This is an internal function designed to merge consecutive fixations that are close in time, based on the following logic:
         If the end of fixation(i) is within a specified threshold (in frames) from the start of fixation(i+1), the fixations are merged.
@@ -219,7 +223,7 @@ class VideoPreprocessor: # instead of inheriting ProcessingContainer im passing 
         If adding a fixation exceeds the 180 frames mark, it will not be included in the group. The remaining frames required to reach 180 will be padded with black frames later. This ensures a consistent snippet length of 180 frames across the entire project.
         :param fixation_dict: fixation dictionary in the correct format
         :param threshold: the frame threshold that below it fixations will be grouped.
-        :return: merged fixations dictionary of {group id : (start frame, end frame)}.
+        :return: merged fixations dictionary of {group id : (start frame, end frame, amount of fixations)}.
         """
         merged_fixations_dict = {}
         snippet_fixed_length = 180
@@ -227,50 +231,82 @@ class VideoPreprocessor: # instead of inheriting ProcessingContainer im passing 
         fixations_amount = 0
         group_id = 0
         idx = 0
-        while idx < len(fixation_dict.keys())-1:
+        while idx < len(fixation_dict.keys()) - 1:
             # current fixation data
             start_frame_current_fixation = fixation_dict[idx][0]
             end_frame_current_fixation = fixation_dict[idx][1]
             # next fixation data
-            start_frame_next_fixation = fixation_dict[idx+1][0]
-            end_frame_next_fixation = fixation_dict[idx+1][1]
+            start_frame_next_fixation = fixation_dict[idx + 1][0]
+            end_frame_next_fixation = fixation_dict[idx + 1][1]
 
             delta_frames = start_frame_next_fixation - end_frame_current_fixation
 
             if current_snippet_length == 0:
-                fixation_length = end_frame_current_fixation - start_frame_current_fixation # unit is frames
-                merged_fixations_dict[group_id] = (start_frame_current_fixation, end_frame_current_fixation)
+                fixation_length = end_frame_current_fixation - start_frame_current_fixation + 1 # unit is frames
+                merged_fixations_dict[group_id] = (start_frame_current_fixation, end_frame_current_fixation, fixations_amount+1)
                 current_snippet_length = fixation_length
                 fixations_amount += 1
-                #idx += 1
+                # idx += 1
                 continue
-            elif delta_frames <= threshold: # add fixations within the threshold
-                fixation_length = end_frame_next_fixation - end_frame_current_fixation
+            elif delta_frames <= threshold:  # add fixations within the threshold
+                fixation_length = end_frame_next_fixation - end_frame_current_fixation + 1
                 snippet_length_if_grouped = current_snippet_length + fixation_length
                 if snippet_length_if_grouped <= snippet_fixed_length:
-                    merged_fixations_dict[group_id] = (merged_fixations_dict[group_id][0], end_frame_next_fixation)
+                    merged_fixations_dict[group_id] = (merged_fixations_dict[group_id][0], end_frame_next_fixation, fixations_amount+1)
                     current_snippet_length = merged_fixations_dict[group_id][1] - merged_fixations_dict[group_id][0]
                     fixations_amount += 1
                     idx += 1
-                elif snippet_length_if_grouped > snippet_fixed_length and idx+1 == len(fixation_dict.keys()):
+                elif snippet_length_if_grouped > snippet_fixed_length and idx + 1 == len(fixation_dict.keys()):
                     # this handles the case in which the fixation group would be longer than 180 frames, but the next fixation would be the last fixation
                     group_id += 1
                     fixations_amount = 1
-                    merged_fixations_dict[group_id] = (start_frame_next_fixation, end_frame_next_fixation)
+                    merged_fixations_dict[group_id] = (start_frame_next_fixation, end_frame_next_fixation, fixations_amount+1)
                     idx += 1
-                else: # (if this snippet length exceeds 180 frames and is not the last fixation)
-                    group_id += 1 # creates key for the next fixations group in the merged dictionary
+                else:  # (if this snippet length exceeds 180 frames and is not the last fixation)
+                    group_id += 1  # creates key for the next fixations group in the merged dictionary
                     fixations_amount = 0
                     current_snippet_length = 0
                     idx += 1
                     continue
-            else: # (this code block is accessed only if there are no temporal close fixations)
+            else:  # (this code block is accessed only if there are no temporal close fixations)
                 group_id += 1
                 fixations_amount = 0
                 current_snippet_length = 0
-                idx+=1
+                idx += 1
                 continue
         return merged_fixations_dict
+
+    def create_metadata_for_subject(self, fixation_dict, merged_fixation_dict):
+        """
+
+        :param fixation_dict:
+        :param merged_fixation_dict:
+        :return:
+        """
+        fixation_dict_length = len(fixation_dict)
+        fixation_groups_amount = len(merged_fixation_dict)
+        group_start_fixation_id = 0
+        group_end_fixation_id = 0
+        group_fixations = {}
+        group_metadata = {}
+        for key, value in merged_fixation_dict.items():
+            group_end_fixation_id += value[2] # this is the amount of fixations in the group
+            for fix_id in range(group_start_fixation_id,group_end_fixation_id):
+                group_fixations[f"fixation_{fix_id}"] = {
+                    "start_frame": int(fixation_dict[fix_id][0]),
+                    "end_frame": int(fixation_dict[fix_id][1]),
+                    "duration": int(fixation_dict[fix_id][1] - fixation_dict[fix_id][0] + 1),
+                    "tag": None, # initialize the tag with None, update later
+                }
+            group_metadata = {
+                "group_id" : f"group_{key}",
+                "start_frame" : int(merged_fixation_dict[key][0]),
+                "end_frame" : int(merged_fixation_dict[key][1]),
+                "total_fixations" : int(merged_fixation_dict[key][2]),
+                "fixations" : group_fixations
+            }
+            self.metadata_manager.add_video_snippet(subject_name=self.subject_name, group_data=group_metadata)
+            group_start_fixation_id += value[2]
 
 
     def _create_out_path_for_video_snippets(self):
@@ -315,13 +351,14 @@ class VideoPreprocessor: # instead of inheriting ProcessingContainer im passing 
                 snippet_length = end_frame - start_frame + 1
                 padding_needed = TARGET_LENGTH - snippet_length
                 if padding_needed < 0:
-                    logging.error(f"Snippet length is more than 180 frames!")
+                    logging.error(f"Snippet {fixation_group} length is more than 180 frames!")
                     raise ValueError(f"Snippet length is more than 180 frames!")
 
                 # set video position and create snippet path
                 full_video.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
                 snippet_path = os.path.join(self.vid_snippets_path, f"snippet_{fixation_group}.mp4")
                 vid_snippet = cv2.VideoWriter(snippet_path, fourcc, fps, (width, height))
+                self.metadata_manager.update_fixation_snippet_path(self.subject_name, snippet_path, fixation_group)
 
                 # write actual frames
                 for frame_number in range(start_frame, end_frame + 1):
@@ -333,13 +370,13 @@ class VideoPreprocessor: # instead of inheriting ProcessingContainer im passing 
 
                 # write padding frames (black frames)
                 black_frame = np.zeros((height, width, 3), dtype=np.uint8)
-                logging.info(f"Padding snippet {fixation_group} with {padding_needed} black frames.")
+                logging.debug(f"Padding snippet {fixation_group} with {padding_needed} black frames.")
                 if padding_needed > 0:
                     for pad in range(padding_needed):
                         vid_snippet.write(black_frame)
 
                 vid_snippet.release()
-                logging.info(f"Video snippet {fixation_group} saved successfully at {snippet_path}.")
+                logging.debug(f"Video snippet {fixation_group} saved successfully at {snippet_path}.")
         finally:
             full_video.release()
         logging.info("All video snippets created successfully.")
@@ -351,9 +388,16 @@ class VideoPreprocessor: # instead of inheriting ProcessingContainer im passing 
 # #test laptop
 # data = DataContainer(data_path=r'C:\Users\yotam\Desktop\Studies\year 3\CTT Project\CTT Yotam Malachi\YotamMalachi\data')
 # subject_name = 'AN755'
+# test_metadata_manager = MetadataManager()
+# test_metadata_manager.save_metadata(subject_name, {"name": subject_name, "videos": []})
 # processing = ProcessingContainer(data_path=data.data_path, subject_name=subject_name)
-# vid_pro = VideoPreprocessor(processing, trail='T2')
+# processing._create_out_path(r'C:\Users\yotam\Desktop\Studies\year 3\CTT Project\CTT Yotam Malachi\CTT Code YM\test')
+# vid_pro = VideoPreprocessor(processing, trail='T2', metadata_manager= test_metadata_manager)
 # vid_pro.match_pl_uni()
+# fix_dict = vid_pro._get_fixations_ts()
+# merged_dict = vid_pro._merge_neighboring_fixations(fix_dict)
+# vid_pro.trim_vid_around_fixations(merged_dict)
+
 #test home
 # data = DataContainer(data_path=r'F:\YotamMalachi\data')
 # subject_name = 'AN755'
