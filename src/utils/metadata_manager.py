@@ -45,7 +45,7 @@ class MetadataManager:
 
             # Replace the original file
             os.replace(temp_path, metadata_path)
-            logging.info(f"Metadata saved for subject: {subject_name}")
+            logging.info(f"Metadata saved for subject: {subject_name} in {metadata_path}")
 
         except Exception as e:
             logging.error(f"Failed to save metadata for subject: {subject_name}. Error: {e}")
@@ -112,6 +112,6 @@ class MetadataManager:
                 else:
                     logging.warning(f"Fixation {fixation_id} not found in group {group_id} for subject {subject_name}.")
                     return
-            else:
-                logging.warning(f"Group {group_id} not found for subject {subject_name}. No changes made.")
+        # in case group_id isn't found:
+        logging.error(f"{group_id} not found for subject {subject_name}. No changes made.")
 

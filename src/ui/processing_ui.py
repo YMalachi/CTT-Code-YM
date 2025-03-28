@@ -30,7 +30,7 @@ class ProcessingUI:
         subject_name_label.pack()  # Place the label above the entry field
 
         # Input field for subject name
-        self.subject_name_entry = tk.Entry(self.root)
+        self.subject_name_entry = tk.Entry(self.root, width=100)
         self.subject_name_entry.pack()
 
         # Label for data path input
@@ -38,7 +38,7 @@ class ProcessingUI:
         data_path_label.pack()  # Place the label above the entry field
 
         # Input field for data path
-        self.data_path_entry = tk.Entry(self.root)
+        self.data_path_entry = tk.Entry(self.root, width=100)
         self.data_path_entry.pack()
 
         # Label for trail
@@ -46,7 +46,7 @@ class ProcessingUI:
         desired_trail_label.pack()  # Place the label above the entry field
 
         # Input field for trail
-        self.desired_trail_entry = tk.Entry(self.root)
+        self.desired_trail_entry = tk.Entry(self.root, width=100)
         self.desired_trail_entry.pack()
 
         # Label for output path
@@ -54,7 +54,7 @@ class ProcessingUI:
         output_path_label.pack()  # Place the label above the entry field
 
         # Input field for trail
-        self.output_path_entry = tk.Entry(self.root)
+        self.output_path_entry = tk.Entry(self.root, width=100)
         self.output_path_entry.pack()
 
         # Submit button
@@ -70,10 +70,11 @@ class ProcessingUI:
         desired_trail = self.desired_trail_entry.get()
 
         # Initialize objects with user input
-        self.metadata_manager = MetadataManager(base_directory="../metadata")
+        self.metadata_manager = MetadataManager(base_directory=r'C:\Users\yotam\Desktop\Studies\year 3\CTT Project\CTT Yotam Malachi\CTT Code YM\metadata')
+        # self.metadata_manager.save_metadata(subject_name)
         self.processing_container = ProcessingContainer(data_path=data_path, subject_name=subject_name)
         self.processing_container._create_out_path(output_path)
-        self.video_processor = VideoPreprocessor(self.processing_container, desired_trail, self.metadata_manager)
+        self.video_processor = VideoPreprocessor(self.processing_container, trail=desired_trail, metadata_manager=self.metadata_manager)
 
         print(f"Created MetadataManager, ProcessingContainer And VideoPreprocessor for {subject_name}")
 
